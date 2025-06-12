@@ -1,87 +1,113 @@
 import * as THREE from 'three';
+import { materials } from '../assets/materials.js';
 
-// Build a 3D headphone using only basic geometries
 export function createProduct() {
-  // Group to hold all parts of the product
+   // Group to hold all parts of the product
   const product = new THREE.Group();
 
-  // create ear cup geometry and material
-  const earCupGeometry = new THREE.CylinderGeometry(0.6, 0.6, 0.3, 32);
-  const earCupMaterial = new THREE.MeshStandardMaterial({
-    color: 0x222222,
-    metalness: 0.3,
-    roughness: 0.6,
-  });
+  // Headband (Box segments forming an arc)
+  const headbandPoints = [
+    new THREE.Vector3(-0.85, 0.4, 0),
+    new THREE.Vector3(-0.85, 1.0, 0),
+    new THREE.Vector3(-0.45, 1.6, 0),
+    new THREE.Vector3(0.45, 1.6, 0),
+    new THREE.Vector3(0.85, 1.0, 0),
+    new THREE.Vector3(0.85, 0.4, 0)
+  ];
 
-  // create left ear cup
-  const leftEarCup = new THREE.Mesh(earCupGeometry, earCupMaterial);
-  leftEarCup.rotation.x = Math.PI / 2;   // Rotate so flat side faces inward
-  leftEarCup.position.set(-1, 0, 0);     // Position to the left
+  for (let i = 0; i < headbandPoints.length - 1; i++) {
+    const start = headbandPoints[i];
+    const end = headbandPoints[i + 1];
+    const direction = new THREE.Vector3().subVectors(end, start);
+    // Custom overlap based on segment index
+    let overlap = 0.03; // default for middle segments
+    if (i === 2)
+      overlap = 0.042; 
 
-  // create right ear cup
-  const rightEarCup = leftEarCup.clone();
-  rightEarCup.position.set(1, 0, 0);     // Position to the right
+    const length = direction.length() + overlap;
 
-  // create ear cushions
-  const cushionGeometry = new THREE.TorusGeometry(0.6, 0.1, 16, 100);
-  const cushionMaterial = new THREE.MeshStandardMaterial({
-    color: 0x555555,
-    metalness: 0.2,
-  });
+    const segment = new THREE.Mesh(
+      new THREE.BoxGeometry(0.08, length, 0.3),
+      materials.plastic
+    );
+    segment.position.copy(start.clone().add(end).multiplyScalar(0.5));
+    segment.quaternion.setFromUnitVectors(
+      new THREE.Vector3(0, 1, 0),
+      direction.normalize()
+    );
+    product.add(segment);
+  }
+
+  // Ear Cups (outer + inner cylinder) 
+  const outerCupGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.2, 32);
+  const innerCupGeometry = new THREE.CylinderGeometry(0.3, 0.3, 0.1, 32);
+
+  // LEFT
+  const leftOuterCup = new THREE.Mesh(outerCupGeometry, materials.metal);
+  leftOuterCup.rotation.z = Math.PI / 2;
+  leftOuterCup.position.set(-0.87, 0.3, 0);
+
+  const leftInnerCup = new THREE.Mesh(innerCupGeometry, materials.innerMetal);
+  leftInnerCup.rotation.z = Math.PI / 2;
+  leftInnerCup.position.set(-0.97, 0.3, 0); // Slightly protruding
+
+  // RIGHT
+  const rightOuterCup = leftOuterCup.clone();
+  rightOuterCup.position.set(0.87, 0.3, 0);
+
+  const rightInnerCup = leftInnerCup.clone();
+  rightInnerCup.position.set(0.97, 0.3, 0);
+
+  // Cushions (aligned with outer cups) 
+  const cushionGeometry = new THREE.TorusGeometry(0.34, 0.1, 16, 100);
 
   // left cushion
-  const leftCushion = new THREE.Mesh(cushionGeometry, cushionMaterial);
+  const leftCushion = new THREE.Mesh(cushionGeometry, materials.cushion);
   leftCushion.rotation.y = Math.PI / 2;
-  leftCushion.position.copy(leftEarCup.position);
+  leftCushion.position.set(-0.8, 0.3, 0);
 
-  // right cushion
+  // right cushion 
   const rightCushion = leftCushion.clone();
-  rightCushion.position.copy(rightEarCup.position);
+  rightCushion.position.set(0.8, 0.3, 0);
 
-  // create headband segments (3 bent cylinder segments) ---
-  const segmentGeometry = new THREE.CylinderGeometry(0.1, 0.1, 1, 16);
-  const bandMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
+  // Mic Boom + Tip (attached to right cup) ===
+  const micBoomLength = 0.7;
 
-  const segment1 = new THREE.Mesh(segmentGeometry, bandMaterial);
-  segment1.rotation.z = Math.PI / 4;
-  segment1.position.set(-0.7, 1, 0);     // Left angled band
+  // Mic boom as a thin box
+  const micBoom = new THREE.Mesh(
+    new THREE.BoxGeometry(0.06, micBoomLength, 0.06),
+    materials.mic
+  );
 
-  const segment2 = new THREE.Mesh(segmentGeometry, bandMaterial);
-  segment2.rotation.z = 0;
-  segment2.position.set(0, 1.3, 0);      // Top band (horizontal)
+  // Position boom to extend from lower front of right ear cup
+  micBoom.position.set(0.865, 0, 0.5); // right cup edge
+  micBoom.rotation.z = -Math.PI / 18;     // downward tilt
+  micBoom.rotation.x = -Math.PI / 2.5;     // slight forward angle
 
-  const segment3 = new THREE.Mesh(segmentGeometry, bandMaterial);
-  segment3.rotation.z = -Math.PI / 4;
-  segment3.position.set(0.7, 1, 0);      // Right angled band
+  // micTip at the end of the boom
+  const micTip = new THREE.Mesh(
+    new THREE.SphereGeometry(0.1, 16, 16),
+    materials.mic
+  );
 
-  // create mic boom
-  const micGeometry = new THREE.CylinderGeometry(0.05, 0.05, 1, 16);
-  const micMaterial = new THREE.MeshStandardMaterial({ color: 0x111111 });
+  // Position micTip at boom end using local direction
+  const boomEndOffset = new THREE.Vector3(0, -micBoomLength / 2, 0);
+  micTip.position.copy(micBoom.position.clone().add(boomEndOffset.applyEuler(micBoom.rotation)));
 
-  const micBoom = new THREE.Mesh(micGeometry, micMaterial);
-  micBoom.rotation.z = -Math.PI / 3;
-  micBoom.position.set(-1.4, -0.4, 0.4);
 
-  // mic tip
-  const micTipGeometry = new THREE.SphereGeometry(0.08, 16, 16);
-  const micTip = new THREE.Mesh(micTipGeometry, micMaterial);
-  micTip.position.set(-1.85, -0.7, 0.65);
-
-  // Add all parts to the main group
+  //  Add All to Group 
   product.add(
-    leftEarCup,
-    rightEarCup,
+    leftOuterCup,
+    leftInnerCup,
+    rightOuterCup,
+    rightInnerCup,
     leftCushion,
     rightCushion,
-    segment1,
-    segment2,
-    segment3,
     micBoom,
     micTip
   );
+  product.rotation.x = -Math.PI / 12; // backward tilt
 
-  // Keep product centered at origin for smooth orbit controls
   product.position.set(0, 0, 0);
-
   return product;
 }
