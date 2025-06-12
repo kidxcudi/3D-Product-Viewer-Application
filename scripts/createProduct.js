@@ -64,11 +64,11 @@ export function createProduct() {
   // left cushion
   const leftCushion = new THREE.Mesh(cushionGeometry, materials.cushion);
   leftCushion.rotation.y = Math.PI / 2;
-  leftCushion.position.set(-0.8, 0.3, 0);
+  leftCushion.position.set(-0.785, 0.3, 0);
 
   // right cushion 
   const rightCushion = leftCushion.clone();
-  rightCushion.position.set(0.8, 0.3, 0);
+  rightCushion.position.set(0.785, 0.3, 0);
 
   // Mic Boom + Tip (attached to right cup) ===
   const micBoomLength = 0.7;
