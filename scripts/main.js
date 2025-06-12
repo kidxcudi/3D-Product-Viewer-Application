@@ -1,4 +1,4 @@
-import { initScene } from './scripts/initScene.js';
+import { initScene } from './initScene.js';
 
 // Initialize the scene and get core objects
 const { scene, camera, renderer, controls } = initScene();
