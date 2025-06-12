@@ -11,8 +11,10 @@ export function initScene() {
   
   // Setup PerspectiveCamera 
   const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000 );
-  camera.position.set(0, 1, 5); // Set camera position back and slightly above
-
+   // Set camera position back and slightly above
+  camera.position.set(0, 3, 6);
+  camera.lookAt(0, 0.5, 0); // look slightly above origin
+  
   // Create WebGL renderer and configure size and resolution
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -25,7 +27,7 @@ export function initScene() {
   controls.enablePan = true;
   controls.enableZoom = true;
   controls.autoRotate = true;            // Enable auto-rotation
-  controls.autoRotateSpeed = 1.5;
+  controls.autoRotateSpeed = 2.5;
 
   // Adjust camera and renderer on window resize
   window.addEventListener('resize', () => {
