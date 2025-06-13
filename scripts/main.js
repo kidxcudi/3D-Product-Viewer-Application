@@ -1,6 +1,7 @@
 import { initScene } from './initScene.js';
 import { createProduct } from './createProduct.js';
 import { addLighting } from './addLighting.js';
+import { enableInteraction } from './interaction.js';
 
 // Initialize the scene and get core objects
 const { scene, camera, renderer, controls } = initScene();
@@ -11,6 +12,9 @@ scene.add(product);
 
 // Add ambient + directional + spot lighting
 addLighting(scene);
+
+// Enable user interaction controls
+enableInteraction({ scene, camera, renderer });
 
 // Animation loop using requestAnimationFrame
 function animate() {

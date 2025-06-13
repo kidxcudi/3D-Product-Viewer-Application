@@ -12,16 +12,16 @@ canvas#viewer {
 
 /* Styles for info panels */
 #info-panel {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  background: rgba(0, 0, 0, 0.7);
-  color: rgb(223, 223, 223);
-  padding: 10px 20px;
-  border-radius: 5px;
-  max-width: 200px;
+  position: fixed;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
   display: none;
-  color: #303c5e;
+  z-index: 10;
+  white-space: nowrap;
 }
 
 #info-panel h3 {
