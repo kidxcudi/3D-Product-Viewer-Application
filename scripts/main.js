@@ -2,27 +2,38 @@ import { initScene } from './initScene.js';
 import { createProduct } from './createProduct.js';
 import { addLighting } from './addLighting.js';
 import { enableInteraction } from './interaction.js';
+import { animateCamera, pauseAutoRotate, resumeAutoRotate, animateCameraBack, isPaused } from './cameraAnimation.js';
+import * as THREE from 'three';
 
-// Initialize the scene and get core objects
 const { scene, camera, renderer, controls } = initScene();
-
-// Add the headphone model to the scene
 const product = createProduct();
 scene.add(product);
-
-// Add ambient + directional + spot lighting
 addLighting(scene);
+enableInteraction({ scene, camera, renderer, controls });
 
-// Enable user interaction controls
-enableInteraction({ scene, camera, renderer });
+const clock = new THREE.Clock();
+let returnTimeout = null;
 
-// Animation loop using requestAnimationFrame
+controls.addEventListener('start', () => {
+  pauseAutoRotate();
+  if (returnTimeout) clearTimeout(returnTimeout);
+});
+
+controls.addEventListener('end', () => {
+  returnTimeout = setTimeout(() => {
+    animateCameraBack(camera, controls);
+  }, 3000);
+});
+
 function animate() {
   requestAnimationFrame(animate);
 
-  controls.update();          // Update controls (for damping or auto-rotate)
-  renderer.render(scene, camera); // Render the current frame
+  if (!isPaused()) {
+    animateCamera(camera, clock); // Auto orbit
+  }
+
+  controls.update();
+  renderer.render(scene, camera);
 }
 
-// Start animation
 animate();

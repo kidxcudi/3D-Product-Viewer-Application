@@ -19,7 +19,7 @@ export const materials = {
 
   // Cushion material
   cushion: new THREE.MeshStandardMaterial({
-    color: 0x94a3b1,           
+    color: 0x849eb7,           
     metalness: 0.1,
     roughness: 0.85,
     name: 'cushion'
@@ -27,7 +27,7 @@ export const materials = {
 
   // Plastic material
   plastic: new THREE.MeshStandardMaterial({
-    color: 0x94a3b1,           
+    color: 0x7b9bb9,           
     metalness: 0.25,
     roughness: 0.5,
     name: 'plastic'
