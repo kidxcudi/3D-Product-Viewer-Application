@@ -4,6 +4,12 @@ import { gsap } from 'gsap';
 let paused = false;
 let zoomedIn = false;
 
+// Orbit state
+let orbitAngle = 0;
+const orbitRadius = 6;
+const orbitHeight = 3;
+const orbitSpeed = 0.4; // radians per second
+
 // Pause auto-rotation
 export function pauseAutoRotate() {
   paused = true;
@@ -14,28 +20,25 @@ export function resumeAutoRotate() {
   paused = false;
 }
 
-// Check if auto-rotation is paused
+// Check if paused
 export function isPaused() {
   return paused;
 }
 
-// Smooth auto-rotate around center
-export function animateCamera(camera, clock) {
+// Custom orbit animation
+export function animateCamera(camera, deltaTime) {
   if (paused || zoomedIn) return;
 
-  const elapsed = clock.getElapsedTime();
-  const angle = 0.4 * elapsed;
-  const radius = 6;
-  const height = 3;
+  orbitAngle += orbitSpeed * deltaTime;
 
-  const x = radius * Math.sin(angle);
-  const z = radius * Math.cos(angle);
+  const x = orbitRadius * Math.sin(orbitAngle);
+  const z = orbitRadius * Math.cos(orbitAngle);
 
-  camera.position.set(x, height, z);
+  camera.position.set(x, orbitHeight, z);
   camera.lookAt(new THREE.Vector3(0, 0.5, 0));
 }
 
-// Animate camera zoom-in to target
+// Zoom in to target object
 export function animateCameraTo(camera, controls, targetObject) {
   zoomedIn = true;
   pauseAutoRotate();
@@ -70,18 +73,29 @@ export function animateCameraTo(camera, controls, targetObject) {
   });
 }
 
-// Animate camera zoom-out to default
+// Zoom out to orbit position
 export function animateCameraBack(camera, controls) {
-  const defaultPos = new THREE.Vector3(6, 3, 6);
   const defaultTarget = new THREE.Vector3(0, 0.5, 0);
 
+  const targetPos = new THREE.Vector3(
+    orbitRadius * Math.sin(orbitAngle),
+    orbitHeight,
+    orbitRadius * Math.cos(orbitAngle)
+  );
+
   gsap.to(camera.position, {
-    x: defaultPos.x,
-    y: defaultPos.y,
-    z: defaultPos.z,
+    x: targetPos.x,
+    y: targetPos.y,
+    z: targetPos.z,
     duration: 1.2,
     ease: 'power2.inOut',
-    onUpdate: () => controls.update()
+    onUpdate: () => controls.update(),
+    onComplete: () => {
+      controls.target.copy(defaultTarget);
+      controls.update();
+      zoomedIn = false;
+      resumeAutoRotate();
+    }
   });
 
   gsap.to(controls.target, {
@@ -92,7 +106,4 @@ export function animateCameraBack(camera, controls) {
     ease: 'power2.inOut',
     onUpdate: () => controls.update()
   });
-
-  zoomedIn = false;
-  resumeAutoRotate();
 }

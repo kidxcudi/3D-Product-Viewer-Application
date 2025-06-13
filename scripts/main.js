@@ -2,7 +2,7 @@ import { initScene } from './initScene.js';
 import { createProduct } from './createProduct.js';
 import { addLighting } from './addLighting.js';
 import { enableInteraction } from './interaction.js';
-import { animateCamera, pauseAutoRotate, resumeAutoRotate, animateCameraBack, isPaused } from './cameraAnimation.js';
+import { animateCamera, pauseAutoRotate, animateCameraBack, isPaused } from './cameraAnimation.js';
 import * as THREE from 'three';
 
 const { scene, camera, renderer, controls } = initScene();
@@ -28,8 +28,10 @@ controls.addEventListener('end', () => {
 function animate() {
   requestAnimationFrame(animate);
 
+  const deltaTime = clock.getDelta(); // 🟢 get time since last frame
+
   if (!isPaused()) {
-    animateCamera(camera, clock); // Auto orbit
+    animateCamera(camera, deltaTime);
   }
 
   controls.update();
