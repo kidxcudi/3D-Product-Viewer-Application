@@ -30,60 +30,67 @@ export function createProduct() {
       new THREE.BoxGeometry(0.08, length, 0.3),
       materials.plastic
     );
+    
     segment.position.copy(start.clone().add(end).multiplyScalar(0.5));
     segment.quaternion.setFromUnitVectors(
       new THREE.Vector3(0, 1, 0),
       direction.normalize()
     );
+    segment.castShadow = true;
+    segment.receiveShadow = true;
     product.add(segment);
   }
 
   // Ear Cups (outer + inner cylinder) 
   const outerCupGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.2, 32);
   const innerCupGeometry = new THREE.CylinderGeometry(0.3, 0.3, 0.1, 32);
-
+  
   // LEFT
   const leftOuterCup = new THREE.Mesh(outerCupGeometry, materials.metal);
   leftOuterCup.rotation.z = Math.PI / 2;
   leftOuterCup.position.set(-0.87, 0.3, 0);
+  leftOuterCup.receiveShadow = true;
 
   const leftInnerCup = new THREE.Mesh(innerCupGeometry, materials.innerMetal);
   leftInnerCup.rotation.z = Math.PI / 2;
   leftInnerCup.position.set(-0.97, 0.3, 0); // Slightly protruding
-
   // RIGHT
   const rightOuterCup = leftOuterCup.clone();
   rightOuterCup.position.set(0.87, 0.3, 0);
+  rightOuterCup.receiveShadow = true;
 
   const rightInnerCup = leftInnerCup.clone();
   rightInnerCup.position.set(0.97, 0.3, 0);
-
   // Cushions (aligned with outer cups) 
   const cushionGeometry = new THREE.TorusGeometry(0.34, 0.1, 16, 100);
-
+  
   // left cushion
   const leftCushion = new THREE.Mesh(cushionGeometry, materials.cushion);
   leftCushion.rotation.y = Math.PI / 2;
   leftCushion.position.set(-0.785, 0.3, 0);
-
+  leftCushion.castShadow = true;
+  leftCushion.receiveShadow = true;
+  
   // right cushion 
   const rightCushion = leftCushion.clone();
   rightCushion.position.set(0.785, 0.3, 0);
-
+  rightCushion.castShadow = true;
+  rightCushion.receiveShadow = true;
+  
   // Mic Boom + Tip (attached to right cup) ===
   const micBoomLength = 0.7;
-
+  
   // Mic boom as a thin box
   const micBoom = new THREE.Mesh(
-    new THREE.BoxGeometry(0.06, micBoomLength, 0.06),
+    new THREE.CylinderGeometry(0.04,0.025, micBoomLength, 20),
     materials.mic
   );
-
+  
   // Position boom to extend from lower front of right ear cup
   micBoom.position.set(0.865, 0, 0.5); // right cup edge
   micBoom.rotation.z = -Math.PI / 18;     // downward tilt
   micBoom.rotation.x = -Math.PI / 2.5;     // slight forward angle
-
+  
   // micTip at the end of the boom
   const micTip = new THREE.Mesh(
     new THREE.SphereGeometry(0.1, 16, 16),

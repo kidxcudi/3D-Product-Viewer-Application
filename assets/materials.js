@@ -3,7 +3,7 @@ import * as THREE from 'three';
 export const materials = {
   //  Refined Metal material
   metal: new THREE.MeshStandardMaterial({
-    color: 0xa8b6c6,           // Light steel/silver
+    color: 0x2e3a59,           
     metalness: 0.9,
     roughness: 0.22,
     name: 'metal'
@@ -11,9 +11,9 @@ export const materials = {
 
 //   Inner metal material
   innerMetal: new THREE.MeshStandardMaterial({
-    color: 0x8ea0b3,
-    metalness: 0.85,
-    roughness: 0.24,
+    color: 0x4c5c8a,
+    metalness: 0.8,
+    roughness: 0.3,
     name: 'innerMetal'
   }),
 
@@ -35,7 +35,7 @@ export const materials = {
 
   // Mic material
   mic: new THREE.MeshStandardMaterial({
-    color: 0x3c4752,           // Medium-dark gray
+    color: 0x303c5e,           
     metalness: 0.2,
     roughness: 0.65,
     name: 'mic'

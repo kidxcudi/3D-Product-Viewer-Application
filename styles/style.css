@@ -16,11 +16,12 @@ canvas#viewer {
   bottom: 20px;
   left: 20px;
   background: rgba(0, 0, 0, 0.7);
-  color: white;
+  color: rgb(223, 223, 223);
   padding: 10px 20px;
   border-radius: 5px;
   max-width: 200px;
   display: none;
+  color: #303c5e;
 }
 
 #info-panel h3 {

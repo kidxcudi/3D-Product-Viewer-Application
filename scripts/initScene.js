@@ -19,6 +19,8 @@ export function initScene() {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   // Add OrbitControls for user interaction (zoom/pan)
   const controls = new OrbitControls(camera, renderer.domElement);
