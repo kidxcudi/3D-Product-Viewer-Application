@@ -62,7 +62,6 @@ export function animateCameraTo(camera, controls, targetObject) {
     controls.autoRotate = false; // stop auto-rotation only if we're zooming in
   }
   _zoomedIn = true;
-  pauseAutoRotate();
 
   const box = new THREE.Box3().setFromObject(targetObject);
   const center = box.getCenter(new THREE.Vector3());
@@ -115,7 +114,10 @@ export function animateCameraBack(camera, controls) {
       controls.target.copy(defaultTarget);
       controls.update();
       _zoomedIn = false;
-      resumeAutoRotate();
+
+      // ✅ ensure orbitAngle is synced to camera
+      setOrbitAngleFromCamera(camera);
+      controls.autoRotate = true;
     }
   });
 
