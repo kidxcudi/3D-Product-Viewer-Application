@@ -2,10 +2,23 @@ import * as THREE from 'three';
 import { gsap } from 'gsap';
 
 let paused = false;
-let zoomedIn = false;
+let _zoomedIn = false;
+
+export function isZoomedIn() {
+  return _zoomedIn;
+}
 
 // Orbit state
 let orbitAngle = 0;
+export function setOrbitAngleFromCamera(camera) {
+  const x = camera.position.x;
+  const z = camera.position.z;
+  orbitAngle = Math.atan2(x, z);
+}
+
+export function getOrbitAngle() {
+  return orbitAngle;
+}
 const orbitRadius = 6;
 const orbitHeight = 3;
 const orbitSpeed = 0.4; // radians per second
@@ -27,7 +40,7 @@ export function isPaused() {
 
 // Custom orbit animation
 export function animateCamera(camera, deltaTime) {
-  if (paused || zoomedIn) return;
+  if (paused || _zoomedIn) return;
 
   orbitAngle += orbitSpeed * deltaTime;
 
@@ -40,7 +53,15 @@ export function animateCamera(camera, deltaTime) {
 
 // Zoom in to target object
 export function animateCameraTo(camera, controls, targetObject) {
-  zoomedIn = true;
+  const targetPosition = new THREE.Vector3();
+  targetObject.getWorldPosition(targetPosition);
+
+  const camDistance = camera.position.distanceTo(targetPosition);
+
+  if (camDistance > 1.5) {
+    controls.autoRotate = false; // stop auto-rotation only if we're zooming in
+  }
+  _zoomedIn = true;
   pauseAutoRotate();
 
   const box = new THREE.Box3().setFromObject(targetObject);
@@ -93,7 +114,7 @@ export function animateCameraBack(camera, controls) {
     onComplete: () => {
       controls.target.copy(defaultTarget);
       controls.update();
-      zoomedIn = false;
+      _zoomedIn = false;
       resumeAutoRotate();
     }
   });

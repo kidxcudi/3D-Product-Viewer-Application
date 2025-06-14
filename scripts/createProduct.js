@@ -28,6 +28,9 @@ export function createProduct() {
       materials.plastic
     );
 
+    //set mesh interactive
+    segment.userData.interactive = true;
+    
     // Adjust position to account for segment length
     segment.position.copy(start.clone().add(end).multiplyScalar(0.5));
     segment.quaternion.setFromUnitVectors(
@@ -49,62 +52,81 @@ export function createProduct() {
 
   // Left ear cup
   const leftOuterCup = new THREE.Mesh(outerCupGeometry, materials.metal.clone());
+  //set mesh interactive
+  leftOuterCup.userData.interactive = true;
   leftOuterCup.rotation.z = Math.PI / 2;
   leftOuterCup.position.set(-0.87, 0.3, 0);
   leftOuterCup.receiveShadow = true;
   leftOuterCup.name = "Left Outer Ear Cup";
-
+  
   // Left inner cup
   const leftInnerCup = new THREE.Mesh(innerCupGeometry, materials.innerMetal.clone());
+  //set mesh interactive
+  leftInnerCup.userData.interactive = true;
   leftInnerCup.rotation.z = Math.PI / 2;
   leftInnerCup.position.set(-0.97, 0.3, 0); // Slightly protruding
   leftInnerCup.name = "Left Inner Ear Cup";
-
+  
   // Right ear cup
   const rightOuterCup = new THREE.Mesh(outerCupGeometry, materials.metal.clone());
+  //set mesh interactive
+  rightOuterCup.userData.interactive = true;
   rightOuterCup.rotation.z = Math.PI / 2;
   rightOuterCup.position.set(0.87, 0.3, 0);
   rightOuterCup.receiveShadow = true;
   rightOuterCup.name = "Right Outer Ear Cup";
-
+  
   // Right inner cup
   const rightInnerCup = new THREE.Mesh(innerCupGeometry, materials.innerMetal.clone());
+  //set mesh interactive
+  rightInnerCup.userData.interactive = true;
   rightInnerCup.rotation.z = Math.PI / 2;
   rightInnerCup.position.set(0.97, 0.3, 0);
   rightInnerCup.name = "Right Inner Ear Cup";
-
+  
   // Left Ear cushions
   const leftCushion = new THREE.Mesh(cushionGeometry, materials.cushion.clone());
+  //set mesh interactive
+  leftCushion.userData.interactive = true;
   leftCushion.rotation.y = Math.PI / 2;
   leftCushion.position.set(-0.785, 0.3, 0);
   leftCushion.castShadow = true;
   leftCushion.receiveShadow = true;
   leftCushion.name = "Left Ear Cushion";
-
+  
   // Right Ear cushions
   const rightCushion = new THREE.Mesh(cushionGeometry, materials.cushion.clone());
+  //set mesh interactive
+  rightCushion.userData.interactive = true;
   rightCushion.rotation.y = Math.PI / 2;
   rightCushion.position.set(0.785, 0.3, 0);
   rightCushion.castShadow = true;
   rightCushion.receiveShadow = true;
   rightCushion.name = "Right Ear Cushion";
-
+  
   // Microphone boom 
   const micBoom = new THREE.Mesh(
     new THREE.CylinderGeometry(0.04, 0.025, 0.7, 20),
     materials.mic.clone()
   );
+  //set mesh interactive
+  micBoom.userData.interactive = true;
+
   micBoom.name = "Mic Boom";
   // Position boom to extend from lower front of right ear cup
   micBoom.position.set(0.865, 0, 0.5); // right cup edge
   micBoom.rotation.z = -Math.PI / 18;  // downward tilt
   micBoom.rotation.x = -Math.PI / 2.5; // slight forward angle
-
+  
   // Microphone tip
   const micTip = new THREE.Mesh(
     new THREE.SphereGeometry(0.1, 16, 16),
     materials.mic.clone()
   );
+  //set mesh interactive
+  micTip.userData.interactive = true;
+  micTip.castShadow = true;
+  micTip.receiveShadow = true;
   micTip.name = "Mic Tip";
   // Position micTip at boom end using local direction
   const boomEndOffset = new THREE.Vector3(0, -0.35, 0);

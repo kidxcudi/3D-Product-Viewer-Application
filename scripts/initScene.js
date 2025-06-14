@@ -28,8 +28,9 @@ export function initScene() {
   controls.dampingFactor = 0.05;
   controls.enablePan = true;
   controls.enableZoom = true;
-  controls.autoRotate = false;            // disable auto-rotation by default
+  controls.autoRotate = true;            // enable auto-rotation by default
   controls.autoRotateSpeed = 3;
+  controls.target.set(0, 0.5, 0);
 
   // Adjust camera and renderer on window resize
   window.addEventListener('resize', () => {
