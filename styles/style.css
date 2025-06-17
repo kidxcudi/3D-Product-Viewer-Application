@@ -10,22 +10,22 @@ canvas#viewer {
   height: 100vh;
 }
 
-/* Styles for info panels */
+
 #info-panel {
-  position: fixed;
-  pointer-events: none;
-  background: rgba(0, 0, 0, 0.75);
+  position: absolute;
+  background: rgba(40, 40, 60, 0.9);
   color: #fff;
-  padding: 6px 12px;
-  border-radius: 4px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-family: sans-serif;
   font-size: 14px;
-  display: none;
-  z-index: 10;
-  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  opacity: 0;
+  transform: translateY(10px);
 }
 
-#info-panel h3 {
-  margin: 0;
-  font-size: 16px;
-  font-weight: normal;
+#info-panel.show {
+  opacity: 1;
+  transform: translateY(0);
 }

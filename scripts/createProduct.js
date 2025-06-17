@@ -139,6 +139,7 @@ export function createProduct() {
     leftCushion, rightCushion,
     micBoom, micTip
   );
+  product.name = 'product';
 
   product.rotation.x = -Math.PI / 12; // backward tilt
   product.position.set(0, 0, 0);

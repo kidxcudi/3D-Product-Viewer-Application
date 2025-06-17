@@ -42,7 +42,7 @@ export function enableInteraction({ scene, camera, renderer, controls }) {
         }
       }
 
-      infoPanel.style.display = 'block';
+      infoPanel.classList.add('show');
       infoPanel.style.left = `${event.clientX + 10}px`;
       infoPanel.style.top = `${event.clientY + 10}px`;
       infoPanel.querySelector('#part-name').textContent = hoveredObject.name || 'Unnamed Part';
@@ -53,7 +53,7 @@ export function enableInteraction({ scene, camera, renderer, controls }) {
       }
       hoveredObject = null;
       originalEmissive = null;
-      infoPanel.style.display = 'none';
+      infoPanel.classList.remove('show');
     }
   });
 

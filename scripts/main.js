@@ -7,6 +7,9 @@ import * as THREE from 'three';
 
 let userIsInteracting = false;
 window.scheduleZoomOut = scheduleZoomOut;
+let floatPhase = 0;
+let lastTime = 0;
+const baseY = 0;
 
 // Initialize the scene, camera, renderer, and controls
 const { scene, camera, renderer, controls } = initScene();
@@ -40,8 +43,25 @@ controls.addEventListener('end', () => {
   } 
 });
 
-function animate() {
+function animate(time) {
   requestAnimationFrame(animate);
+
+  if (!lastTime) {
+    lastTime = time;
+    return;
+  }
+
+  const deltaTime = time - lastTime;
+  lastTime = time;
+
+  const product = scene.getObjectByName('product');
+  if (product) {
+    if (!isZoomedIn()) {
+      floatPhase += deltaTime * 0.002; // advance smoothly only when floating
+      product.position.y = baseY + 0.1 * Math.sin(floatPhase);
+    }
+    // Do nothing if zoomed in: retain current Y position
+  }
 
   controls.update();
   renderer.render(scene, camera);
