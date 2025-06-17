@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 export function addLighting(scene) {
   // Soft ambient for global fill 
-  const ambientLight = new THREE.AmbientLight(0xffffff, 1.7); // Slightly brighter
+  const ambientLight = new THREE.AmbientLight(0xffffff, 1.5); // Slightly brighter
   scene.add(ambientLight);
 
   // Main key light (directional light
@@ -12,7 +12,7 @@ export function addLighting(scene) {
   directionalLight.shadow.mapSize.set(1024, 1024);
   directionalLight.shadow.camera.near = 0.5;
   directionalLight.shadow.camera.far = 50;
-  directionalLight.shadow.bias = -0.0001;
+  directionalLight.shadow.bias = -0.001;
   scene.add(directionalLight);
 
   // Soft fill light (reduces harsh shadow)

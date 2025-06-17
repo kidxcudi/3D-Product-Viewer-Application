@@ -1,5 +1,15 @@
 import * as THREE from 'three';
 
+const loader = new THREE.TextureLoader();
+
+const fabricNormal = loader.load('assets/textures/Tulle01Large_1K_Normal.png');
+const fabricRoughness = loader.load('assets/textures/Tulle01Large_1K_Roughness.png');
+
+fabricNormal.wrapS = fabricNormal.wrapT = THREE.RepeatWrapping;
+fabricRoughness.wrapS = fabricRoughness.wrapT = THREE.RepeatWrapping;
+fabricNormal.repeat.set(2, 2); 
+fabricRoughness.repeat.set(2, 2);
+
 export const materials = {
   //  Refined Metal material
   metal: new THREE.MeshStandardMaterial({
@@ -19,9 +29,11 @@ export const materials = {
 
   // Cushion material
   cushion: new THREE.MeshStandardMaterial({
-    color: 0x849eb7,           
-    metalness: 0.1,
-    roughness: 0.85,
+    color: 0x849eb7,   
+    normalMap: fabricNormal,
+    roughnessMap: fabricRoughness,        
+    metalness: 0.0,
+    roughness: 0.9,
     name: 'cushion'
   }),
 

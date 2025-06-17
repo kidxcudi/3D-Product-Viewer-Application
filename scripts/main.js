@@ -11,6 +11,24 @@ let floatPhase = 0;
 let lastTime = 0;
 const baseY = 0;
 
+const toggleBtn = document.getElementById('toggle-legend');
+const legendList = document.getElementById('legend-list');
+
+document.getElementById('resetViewBtn').addEventListener('click', () => {
+  animateCameraBack(camera, controls);
+});
+
+// Start collapsed
+legendList.classList.add('collapsed');
+toggleBtn.setAttribute('aria-expanded', false);
+
+toggleBtn.addEventListener('click', () => {
+  const isCollapsed = legendList.classList.toggle('collapsed');
+  toggleBtn.setAttribute('aria-expanded', !isCollapsed);
+});
+
+
+
 // Initialize the scene, camera, renderer, and controls
 const { scene, camera, renderer, controls } = initScene();
 const product = createProduct();
