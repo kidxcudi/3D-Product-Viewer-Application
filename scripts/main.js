@@ -6,6 +6,7 @@ import { animateCamera, setOrbitAngleFromCamera , animateCameraBack, isPaused, i
 import * as THREE from 'three';
 
 let userIsInteracting = false;
+window.scheduleZoomOut = scheduleZoomOut;
 
 // Initialize the scene, camera, renderer, and controls
 const { scene, camera, renderer, controls } = initScene();
@@ -13,6 +14,16 @@ const product = createProduct();
 scene.add(product);
 addLighting(scene);
 enableInteraction({ scene, camera, renderer, controls });
+
+function scheduleZoomOut(camera, controls) {
+  if (returnTimeout) clearTimeout(returnTimeout);
+
+  returnTimeout = setTimeout(() => {
+    if (isZoomedIn()) {
+      animateCameraBack(camera, controls);
+    }
+  }, 3000);
+}
 
 let returnTimeout = null;
 
@@ -24,19 +35,10 @@ controls.addEventListener('start', () => {
 controls.addEventListener('end', () => {
   userIsInteracting = false;
 
-  if (returnTimeout) clearTimeout(returnTimeout);
-
   if (isZoomedIn()) {
-    returnTimeout = setTimeout(() => {
-      if (isZoomedIn()) {
-        animateCameraBack(camera, controls);
-      }
-    }, 3000);
+    scheduleZoomOut(camera, controls);
   } 
 });
-
-
-
 
 function animate() {
   requestAnimationFrame(animate);

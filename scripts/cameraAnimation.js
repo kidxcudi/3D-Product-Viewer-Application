@@ -80,7 +80,14 @@ export function animateCameraTo(camera, controls, targetObject) {
     z: newPos.z,
     duration: 1,
     ease: 'power2.out',
-    onUpdate: () => controls.update()
+    onUpdate: () => controls.update(),
+    onComplete: () => {
+      controls.update();
+      // ✅ trigger zoom-out countdown
+      if (typeof window.scheduleZoomOut === 'function') {
+        window.scheduleZoomOut(camera, controls);
+      }
+    }
   });
 
   gsap.to(controls.target, {

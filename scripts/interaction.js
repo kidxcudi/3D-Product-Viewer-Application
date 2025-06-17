@@ -6,6 +6,9 @@ import { animateCameraTo, animateCameraBack, isZoomedIn } from './cameraAnimatio
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
+let lastCamPos = new THREE.Vector3();
+let lastCamTarget = new THREE.Vector3();
+
 let hoveredObject = null;
 let originalEmissive = null;
 
@@ -54,7 +57,19 @@ export function enableInteraction({ scene, camera, renderer, controls }) {
     }
   });
 
+  canvas.addEventListener('pointerdown', () => {
+    lastCamPos.copy(camera.position);
+    lastCamTarget.copy(controls.target);
+  });
+
+
   canvas.addEventListener('click', (event) => {
+    const cameraMoved =
+      lastCamPos.distanceTo(camera.position) > 0.01 ||
+      lastCamTarget.distanceTo(controls.target) > 0.01;
+
+    if (isZoomedIn() && cameraMoved) return;
+
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 

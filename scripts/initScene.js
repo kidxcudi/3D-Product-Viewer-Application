@@ -29,7 +29,7 @@ export function initScene() {
   controls.enablePan = true;
   controls.enableZoom = true;
   controls.autoRotate = true;            // enable auto-rotation by default
-  controls.autoRotateSpeed = 3;
+  controls.autoRotateSpeed = 3.25;
   controls.target.set(0, 0.5, 0);
 
   // Adjust camera and renderer on window resize
