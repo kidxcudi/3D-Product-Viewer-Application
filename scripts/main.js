@@ -1,5 +1,5 @@
 import { initScene } from './initScene.js';
-import { createProduct } from './createProduct.js';
+import { createProduct, clonedMaterials } from './createProduct.js';
 import { addLighting } from './addLighting.js';
 import {
   enableInteraction,
@@ -10,13 +10,19 @@ import {
   animateCameraBack,
   isZoomedIn
 } from './cameraAnimation.js';
+import { themes } from '../assets/materialThemes.js';
 
-// === Interaction and floating animation state ===
+
+// === interaction and floating animation state ===
 let userIsInteracting = false;
 window.scheduleZoomOut = scheduleZoomOut;
 let floatPhase = 0;
 let lastTime = 0;
 const baseY = 0;
+
+// Theme toggle logic
+const themeToggleBtn = document.getElementById('themeToggleBtn');
+const themeDropdown = document.getElementById('themeDropdown');
 
 // === Legend toggle UI logic ===
 const toggleBtn = document.getElementById('toggle-legend');
@@ -36,6 +42,18 @@ toggleBtn.setAttribute('aria-expanded', false);
 toggleBtn.addEventListener('click', () => {
   const isCollapsed = legendList.classList.toggle('collapsed');
   toggleBtn.setAttribute('aria-expanded', !isCollapsed);
+});
+
+// Toggle dropdown on button click
+themeToggleBtn.addEventListener('click', () => {
+  themeDropdown.classList.toggle('show');
+});
+
+// Hide dropdown when clicking outside
+document.addEventListener('click', (e) => {
+  if (!themeDropdown.contains(e.target) && e.target !== themeToggleBtn) {
+    themeDropdown.classList.remove('show');
+  }
 });
 
 // === 3D Scene Initialization ===
@@ -75,6 +93,20 @@ controls.addEventListener('end', () => {
     scheduleZoomOut(camera, controls);
   }
 });
+
+themeSelect.addEventListener('change', (e) => {
+  const selected = e.target.value;
+  const theme = themes[selected];
+
+  if (theme) {
+    clonedMaterials.metal.forEach(mat => mat.color.setHex(theme.metal));
+    clonedMaterials.innerMetal.forEach(mat => mat.color.setHex(theme.innerMetal));
+    clonedMaterials.cushion.forEach(mat => mat.color.setHex(theme.cushion));
+    clonedMaterials.mic.forEach(mat => mat.color.setHex(theme.mic));
+    clonedMaterials.plastic.forEach(mat => mat.color.setHex(theme.plastic));
+  }
+});
+
 
 // === Animation Loop ===
 function animate(time) {
