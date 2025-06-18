@@ -225,7 +225,7 @@ canvas#viewer {
   bottom: 20px;
   right: 20px;
   padding: 8px 14px;
-  background: rgba(17, 17, 17, 0.7);
+  background: rgba(15, 15, 25, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.9);
   border-radius: 10px;
   color: white;
@@ -241,7 +241,7 @@ canvas#viewer {
 
 /* Hover state for reset button */
 #resetViewBtn:hover {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.9);
 }
 
 /* Icon inside reset button */
@@ -270,4 +270,93 @@ canvas#viewer {
 /* Show the exploded view label */
 #exploded-label.show {
   opacity: 1;
+}
+
+/* === Theme Control Container === */
+#theme-controls {
+  position: absolute;       /* Fixed in the top-left corner */
+  top: 20px;
+  left: 20px;
+  color: white;
+  font-family: sans-serif;
+  user-select: none;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+}
+
+/* === Palette Button === */
+#themeToggleBtn {
+  background: rgba(15, 15, 25, 0.8);  /* Semi-transparent dark background */
+  border: none;
+  border-radius: 50%;                /* Circular shape */
+  width: 55px;
+  height: 55px;
+  cursor: pointer;
+  color: white;
+  font-size: 28px;
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+  box-shadow: none;
+  position: relative;
+  z-index: 20;                        /* Stays above dropdown */
+}
+
+#themeToggleBtn:hover {
+  background: rgba(15, 15, 25, 0.9);  /* Slightly darker on hover */
+}
+
+/* === Dropdown Panel (Hidden by Default) === */
+#themeDropdown {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%) translateX(80%); /* Slightly offset to the right */
+  background: rgba(15, 15, 25, 0.8);           /* Matches button background */
+  border-radius: 8px;
+  padding: 4px 6px;
+  box-shadow: none;
+  width: max-content;
+  min-width: 140px;
+  opacity: 0;                                  /* Initially invisible */
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 15;
+}
+
+/* === Show Dropdown (When Activated) === */
+#themeDropdown.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(-50%) translateX(105%); /* Slides in */
+}
+
+/* === Dropdown Select Menu === */
+#themeSelect {
+  width: 140px;
+  background-color: transparent;
+  color: #ffffff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  appearance: none;                /* Removes default styles */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  /* Custom dropdown arrow (SVG) */
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='white' stroke-width='2'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 10px 6px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#themeSelect:hover,
+#themeSelect:focus {
+  outline: none;
 }

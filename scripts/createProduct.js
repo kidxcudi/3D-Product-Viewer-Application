@@ -1,13 +1,20 @@
 import * as THREE from 'three';
 import { materials } from '../assets/materials.js';
 
+// Object to keep references of all cloned materials for theme updates
+export const clonedMaterials = {
+  metal: [],
+  innerMetal: [],
+  cushion: [],
+  mic: [],
+  plastic: []
+};
+
 // The product is built from multiple meshes grouped into a single THREE.Group
 export function createProduct() {
-  const product = new THREE.Group(); // This group will hold all the parts of the product
+  const product = new THREE.Group();
 
-  // Create the HEADBAND PARTS
-
-  // These points define the curve of the headband from left to right
+  // HEADBAND PARTS
   const headbandPoints = [
     new THREE.Vector3(-0.85, 0.4, 0),
     new THREE.Vector3(-0.85, 1.0, 0),
@@ -17,49 +24,42 @@ export function createProduct() {
     new THREE.Vector3(0.85, 0.4, 0)
   ];
 
-  // Loop through each pair of points and connect them with a box to form segments
   for (let i = 0; i < headbandPoints.length - 1; i++) {
     const start = headbandPoints[i];
     const end = headbandPoints[i + 1];
-
-    // Calculate the direction and length between each pair
     const direction = new THREE.Vector3().subVectors(end, start);
-    const overlap = i === 2 ? 0.042 : 0.03; // Slight overlap to avoid gaps
+    const overlap = i === 2 ? 0.042 : 0.03;
     const length = direction.length() + overlap;
 
-    // Create a narrow box to represent each curved segment
+    // Clone plastic material for each headband segment and track it
+    const segmentMaterial = materials.plastic.clone();
+    clonedMaterials.plastic.push(segmentMaterial);
+
     const segment = new THREE.Mesh(
       new THREE.BoxGeometry(0.08, length, 0.3),
-      materials.plastic
+      segmentMaterial
     );
 
-    // Position the segment at the midpoint between start and end
     segment.position.copy(start.clone().add(end).multiplyScalar(0.5));
-
-    // Rotate the segment so it aligns with the direction vector
     segment.quaternion.setFromUnitVectors(
       new THREE.Vector3(0, 1, 0),
       direction.normalize()
     );
 
-    // Mark this mesh as interactive and explodable
     segment.name = `Headband Segment ${i + 1}`;
     segment.userData.interactive = true;
     segment.userData.explodable = true;
 
-    // Calculate an explosion direction pushing outward from the arc
-    const arcCenter = new THREE.Vector3(0, 1.0, 0); // Center of curve
-    const midpoint = start.clone().add(end).multiplyScalar(1.5); // Go a bit past midpoint
+    const arcCenter = new THREE.Vector3(0, 1.0, 0);
+    const midpoint = start.clone().add(end).multiplyScalar(1.5);
     const outwardDir = midpoint.clone().sub(arcCenter).normalize();
-    outwardDir.y += 0.2; // Add vertical boost
+    outwardDir.y += 0.2;
     outwardDir.normalize();
     segment.userData.explosionVector = outwardDir;
 
-    // Enable shadows for realism
     segment.castShadow = true;
     segment.receiveShadow = true;
 
-    // Add this headband piece to the main group
     product.add(segment);
   }
 
@@ -70,10 +70,11 @@ export function createProduct() {
 
   // LEFT EAR COMPONENTS
 
-  // Outer shell of the left ear cup
-  const leftOuterCup = new THREE.Mesh(outerCupGeometry, materials.metal.clone());
-  leftOuterCup.rotation.z = Math.PI / 2; // Rotate so it's flat like a speaker
-  leftOuterCup.position.set(-0.87, 0.3, 0); // Position on the left
+  const leftOuterCupMaterial = materials.metal.clone();
+  clonedMaterials.metal.push(leftOuterCupMaterial);
+  const leftOuterCup = new THREE.Mesh(outerCupGeometry, leftOuterCupMaterial);
+  leftOuterCup.rotation.z = Math.PI / 2;
+  leftOuterCup.position.set(-0.87, 0.3, 0);
   leftOuterCup.name = "Left Outer Ear Cup";
   leftOuterCup.userData = {
     interactive: true,
@@ -82,10 +83,11 @@ export function createProduct() {
   };
   leftOuterCup.receiveShadow = true;
 
-  // Inner part (speaker area)
-  const leftInnerCup = new THREE.Mesh(innerCupGeometry, materials.innerMetal.clone());
+  const leftInnerCupMaterial = materials.innerMetal.clone();
+  clonedMaterials.innerMetal.push(leftInnerCupMaterial);
+  const leftInnerCup = new THREE.Mesh(innerCupGeometry, leftInnerCupMaterial);
   leftInnerCup.rotation.z = Math.PI / 2;
-  leftInnerCup.position.set(-0.97, 0.3, 0); // Slightly deeper inside
+  leftInnerCup.position.set(-0.97, 0.3, 0);
   leftInnerCup.name = "Left Inner Ear Cup";
   leftInnerCup.userData = {
     interactive: true,
@@ -93,8 +95,9 @@ export function createProduct() {
     explosionVector: new THREE.Vector3(-1.5, 0, 0)
   };
 
-  // Cushion that wraps around the ear
-  const leftCushion = new THREE.Mesh(cushionGeometry, materials.cushion.clone());
+  const leftCushionMaterial = materials.cushion.clone();
+  clonedMaterials.cushion.push(leftCushionMaterial);
+  const leftCushion = new THREE.Mesh(cushionGeometry, leftCushionMaterial);
   leftCushion.rotation.y = Math.PI / 2;
   leftCushion.position.set(-0.785, 0.3, 0);
   leftCushion.name = "Left Ear Cushion";
@@ -106,8 +109,11 @@ export function createProduct() {
   leftCushion.castShadow = true;
   leftCushion.receiveShadow = true;
 
-  // RIGHT EAR COMPONENTS (same as left, mirrored)
-  const rightOuterCup = new THREE.Mesh(outerCupGeometry, materials.metal.clone());
+  // RIGHT EAR COMPONENTS
+
+  const rightOuterCupMaterial = materials.metal.clone();
+  clonedMaterials.metal.push(rightOuterCupMaterial);
+  const rightOuterCup = new THREE.Mesh(outerCupGeometry, rightOuterCupMaterial);
   rightOuterCup.rotation.z = Math.PI / 2;
   rightOuterCup.position.set(0.87, 0.3, 0);
   rightOuterCup.name = "Right Outer Ear Cup";
@@ -118,7 +124,9 @@ export function createProduct() {
   };
   rightOuterCup.receiveShadow = true;
 
-  const rightInnerCup = new THREE.Mesh(innerCupGeometry, materials.innerMetal.clone());
+  const rightInnerCupMaterial = materials.innerMetal.clone();
+  clonedMaterials.innerMetal.push(rightInnerCupMaterial);
+  const rightInnerCup = new THREE.Mesh(innerCupGeometry, rightInnerCupMaterial);
   rightInnerCup.rotation.z = Math.PI / 2;
   rightInnerCup.position.set(0.97, 0.3, 0);
   rightInnerCup.name = "Right Inner Ear Cup";
@@ -128,7 +136,9 @@ export function createProduct() {
     explosionVector: new THREE.Vector3(1.5, 0, 0)
   };
 
-  const rightCushion = new THREE.Mesh(cushionGeometry, materials.cushion.clone());
+  const rightCushionMaterial = materials.cushion.clone();
+  clonedMaterials.cushion.push(rightCushionMaterial);
+  const rightCushion = new THREE.Mesh(cushionGeometry, rightCushionMaterial);
   rightCushion.rotation.y = Math.PI / 2;
   rightCushion.position.set(0.785, 0.3, 0);
   rightCushion.name = "Right Ear Cushion";
@@ -142,10 +152,11 @@ export function createProduct() {
 
   // MICROPHONE BOOM AND TIP
 
-  // Microphone boom arm extending from the side of ear cup
+  const micBoomMaterial = materials.mic.clone();
+  clonedMaterials.mic.push(micBoomMaterial);
   const micBoom = new THREE.Mesh(
     new THREE.CylinderGeometry(0.04, 0.025, 0.7, 20),
-    materials.mic.clone()
+    micBoomMaterial
   );
   micBoom.name = "Mic Boom";
   micBoom.userData = {
@@ -154,13 +165,14 @@ export function createProduct() {
     explosionVector: new THREE.Vector3(1, 0, 0.65)
   };
   micBoom.position.set(0.865, 0, 0.5);
-  micBoom.rotation.z = -Math.PI / 18;   // tilt outward
-  micBoom.rotation.x = -Math.PI / 2.5; // angle downward
+  micBoom.rotation.z = -Math.PI / 18;
+  micBoom.rotation.x = -Math.PI / 2.5;
 
-  // Microphone tip (ball at the end)
+  const micTipMaterial = materials.mic.clone();
+  clonedMaterials.mic.push(micTipMaterial);
   const micTip = new THREE.Mesh(
     new THREE.SphereGeometry(0.1, 16, 16),
-    materials.mic.clone()
+    micTipMaterial
   );
   micTip.name = "Mic Tip";
   micTip.userData = {
@@ -171,21 +183,19 @@ export function createProduct() {
   micTip.castShadow = true;
   micTip.receiveShadow = true;
 
-  // Position mic tip at the end of the boom using offset + rotation
   const boomEndOffset = new THREE.Vector3(0, -0.35, 0);
   micTip.position.copy(micBoom.position.clone().add(boomEndOffset.applyEuler(micBoom.rotation)));
 
-  // ADD ALL COMPONENTS TO THE MAIN PRODUCT GROUP
+  // Add all parts to the product group
   product.add(
     leftOuterCup, leftInnerCup, leftCushion,
     rightOuterCup, rightInnerCup, rightCushion,
     micBoom, micTip
   );
 
-  // Final positioning and rotation of the entire product
   product.name = 'product';
-  product.rotation.x = -Math.PI / 12; // slight downward tilt
-  product.position.set(0, 0, 0); // Center the product in the scene
+  product.rotation.x = -Math.PI / 12;
+  product.position.set(0, 0, 0);
 
   return product;
 }
