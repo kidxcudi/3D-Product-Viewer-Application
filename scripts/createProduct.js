@@ -35,7 +35,7 @@ export function createProduct() {
     const length = direction.length() + overlap;
 
     // Clone plastic material to make segments individually editable
-    const segmentMaterial = materials.plastic.clone();
+    const segmentMaterial = materials.plastic;
     clonedMaterials.plastic.push(segmentMaterial);
 
     const segment = new THREE.Mesh(
