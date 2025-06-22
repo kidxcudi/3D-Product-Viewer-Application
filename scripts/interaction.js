@@ -102,21 +102,29 @@ export function enableInteraction({ scene, camera, renderer, controls }) {
     const clickedObject = intersects[0].object;
     const mat = clickedObject.material;
 
-    // Store original color if not yet stored
-    if (!mat.userData.originalColor) {
-      mat.userData.originalColor = mat.color.clone();
+    // Store original base color and emissive state
+    const previousColor = mat.color.clone();
+
+    if (!mat.userData.originalEmissive && mat.emissive) {
+      mat.userData.originalEmissive = mat.emissive.clone();
     }
 
-    mat.color.set(0x6ca0ff); // briefly highlight selected
+    //  Disable emissive temporarily so click color is visible
+    if (mat.emissive) {
+      mat.emissive.setHex(0x000000);
+    }
+
+    mat.color.set('#3b82f6'); // briefly highlight selected
 
     animateCameraTo(camera, controls, clickedObject); // animate zoom
 
     // Restore color after delay
     setTimeout(() => {
-      if (mat.userData.originalColor) {
-        mat.color.copy(mat.userData.originalColor);
+      mat.color.copy(previousColor);
+      if (mat.userData.originalEmissive && mat.emissive) {
+        mat.emissive.copy(mat.userData.originalEmissive);
       }
-    }, 800);
+    }, 400);
   });
 }
 
